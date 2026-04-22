@@ -45,3 +45,45 @@ window.addEventListener('scroll', () => {
         navbar.style.height = '80px';
     }
 });
+
+// Chatbot Widget Logic
+const chatToggle = document.getElementById('chatToggle');
+const chatWindow = document.getElementById('chatWindow');
+const chatClose = document.getElementById('chatClose');
+const chatSend = document.getElementById('chatSend');
+const chatInput = document.getElementById('chatInput');
+
+// Phone number for WhatsApp
+const whatsappNumber = "917710752782";
+
+chatToggle.addEventListener('click', () => {
+    chatWindow.classList.toggle('active');
+});
+
+chatClose.addEventListener('click', () => {
+    chatWindow.classList.remove('active');
+});
+
+chatSend.addEventListener('click', () => {
+    sendMessage();
+});
+
+chatInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+    }
+});
+
+function sendMessage() {
+    const message = chatInput.value.trim();
+    if (message) {
+        // Redirect to WhatsApp API
+        const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+        window.open(whatsappUrl, '_blank');
+        
+        // Clear input and close window
+        chatInput.value = '';
+        chatWindow.classList.remove('active');
+    }
+}
