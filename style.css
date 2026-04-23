@@ -122,6 +122,8 @@ h2 {
     padding: 0.5rem 1.2rem;
     border-radius: 30px;
     font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .btn-primary-sm:hover {
@@ -919,9 +921,9 @@ footer {
 
 /* Responsive Design */
 @media (max-width: 992px) {
-    .about-grid, .global-content, .brands-grid, .mv-grid, .contact-grid {
+    .about-grid, .global-content, .brands-grid, .mv-grid, .contact-grid, .about-stats {
         grid-template-columns: 1fr;
-        gap: 3rem;
+        gap: 2rem;
     }
     
     .directors-grid {
@@ -971,6 +973,14 @@ footer {
 }
 
 @media (max-width: 768px) {
+    .section {
+        padding: 3rem 0;
+    }
+    
+    .model-grid {
+        grid-template-columns: 1fr;
+    }
+    
     .nav-links {
         position: absolute;
         top: 80px;
