@@ -48,42 +48,133 @@ window.addEventListener('scroll', () => {
 
 // Chatbot Widget Logic
 const chatToggle = document.getElementById('chatToggle');
-const chatWindow = document.getElementById('chatWindow');
-const chatClose = document.getElementById('chatClose');
-const chatSend = document.getElementById('chatSend');
-const chatInput = document.getElementById('chatInput');
+const contactModal = document.getElementById('contactModal');
+const modalClose = document.getElementById('modalClose');
+const modalSubmit = document.getElementById('modalSubmit');
+
+// Form inputs
+const modalName = document.getElementById('modalName');
+const modalEmail = document.getElementById('modalEmail');
+const modalSubject = document.getElementById('modalSubject');
+const modalMessage = document.getElementById('modalMessage');
 
 // Phone number for WhatsApp
 const whatsappNumber = "917710752782";
 
 chatToggle.addEventListener('click', () => {
-    chatWindow.classList.toggle('active');
+    contactModal.classList.add('active');
 });
 
-chatClose.addEventListener('click', () => {
-    chatWindow.classList.remove('active');
+modalClose.addEventListener('click', () => {
+    contactModal.classList.remove('active');
 });
 
-chatSend.addEventListener('click', () => {
-    sendMessage();
-});
-
-chatInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
+// Close when clicking outside modal content
+contactModal.addEventListener('click', (e) => {
+    if (e.target === contactModal) {
+        contactModal.classList.remove('active');
     }
 });
 
+modalSubmit.addEventListener('click', () => {
+    sendMessage();
+});
+
 function sendMessage() {
-    const message = chatInput.value.trim();
-    if (message) {
+    const name = modalName.value.trim();
+    const email = modalEmail.value.trim();
+    const subject = modalSubject.value.trim();
+    const message = modalMessage.value.trim();
+    
+    if (name && message) {
+        // Format the message
+        const formattedMessage = `*New Inquiry from Website*\n\n*Name:* ${name}\n*Email:* ${email || 'Not provided'}\n*Subject:* ${subject || 'Not provided'}\n\n*Message:*\n${message}`;
+        
         // Redirect to WhatsApp API
-        const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+        const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(formattedMessage)}`;
         window.open(whatsappUrl, '_blank');
         
-        // Clear input and close window
-        chatInput.value = '';
-        chatWindow.classList.remove('active');
+        // Clear inputs and close window
+        modalName.value = '';
+        modalEmail.value = '';
+        modalSubject.value = '';
+        modalMessage.value = '';
+        contactModal.classList.remove('active');
+    } else {
+        alert("Please provide at least your Name and a Message.");
+    }
+}
+
+// Product Showcase Dynamic Loading
+// Add any new image names to this array to dynamically show them in the gallery
+const showcaseImages = [
+    "showcase_warehouse_1776981485186.png",
+    "showcase_pills_1776981501640.png",
+    "showcase_herbal_1776981517010.png",
+    "showcase_packaging_1776981532673.png",
+    "showcase_shipment_1776981555316.png",
+    "showcase_ayurvedic_1776981570832.png",
+    "showcase_bottle_1776981587305.png",
+    "showcase_global_1776981601535.png"
+];
+
+const showcaseContainer = document.getElementById('dynamic-showcase');
+
+if (showcaseContainer) {
+    let imagesHTML = '';
+    showcaseImages.forEach(img => {
+        // Create a display name from filename
+        let altText = img.split('_')[1] || "Showcase Product";
+        altText = altText.charAt(0).toUpperCase() + altText.slice(1);
+        
+        imagesHTML += `<div class="showcase-item"><img src="images/showcase/${img}" alt="${altText}"></div>`;
+    });
+    
+    // Duplicate the images once for the seamless scrolling effect
+    showcaseContainer.innerHTML = imagesHTML + imagesHTML;
+
+    // Auto-scroll logic
+    let scrollSpeed = 1; // Pixels per frame
+    let isHovering = false;
+
+    function autoScroll() {
+        if (!isHovering) {
+            showcaseContainer.scrollLeft += scrollSpeed;
+            // Reset if we've reached halfway (the start of the cloned set)
+            if (showcaseContainer.scrollLeft >= showcaseContainer.scrollWidth / 2) {
+                showcaseContainer.scrollLeft = 0;
+            } else if (showcaseContainer.scrollLeft <= 0 && scrollSpeed < 0) {
+                showcaseContainer.scrollLeft = showcaseContainer.scrollWidth / 2;
+            }
+        }
+        requestAnimationFrame(autoScroll);
+    }
+    
+    // Start auto-scroll
+    autoScroll();
+
+    // Pause on hover
+    showcaseContainer.parentElement.addEventListener('mouseenter', () => isHovering = true);
+    showcaseContainer.parentElement.addEventListener('mouseleave', () => isHovering = false);
+
+    // Arrow navigation
+    const leftBtn = document.getElementById('showcase-left');
+    const rightBtn = document.getElementById('showcase-right');
+
+    if (leftBtn && rightBtn) {
+        // Item width (350) + Gap (32px or 2rem)
+        const scrollAmount = 382; 
+        
+        leftBtn.addEventListener('click', () => {
+            showcaseContainer.style.scrollBehavior = 'smooth';
+            showcaseContainer.scrollBy({ left: -scrollAmount });
+            setTimeout(() => showcaseContainer.style.scrollBehavior = 'auto', 500);
+        });
+        
+        rightBtn.addEventListener('click', () => {
+            showcaseContainer.style.scrollBehavior = 'smooth';
+            showcaseContainer.scrollBy({ left: scrollAmount });
+            setTimeout(() => showcaseContainer.style.scrollBehavior = 'auto', 500);
+        });
     }
 }
